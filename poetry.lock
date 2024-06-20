@@ -1,6 +1,6 @@
 [[package]]
 name = "hid"
-version = "1.0.4"
+version = "1.0.2"
 description = "ctypes bindings for hidapi"
 category = "main"
 optional = false
@@ -9,10 +9,10 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "0686b4b5474dab5ea32c7c84d04f617a54588e3643f5fbd6ac8e0e8f4e0dc239"
+content-hash = "ca5c59120102a961888a59284b9606dec3539fa5fad19ba97d67cd7516edfc6c"
 
 [metadata.files]
 hid = [
-    {file = "hid-1.0.4-py2-none-any.whl", hash = "sha256:fba9913f07030b01059b822b24c83b370ca3f444e9e6443bd662f9f1aa3f0780"},
-    {file = "hid-1.0.4.tar.gz", hash = "sha256:f61b0382f37a334bc8ba8604bc84b94875ee4f594fbbaf82b2c3b3e827883fc1"},
+    {file = "hid-1.0.2-py2-none-any.whl", hash = "sha256:e014a1a7b13472be2f1e6087508e0dcfb7ced886a73140b6d610eb262ad841a9"},
+    {file = "hid-1.0.2.tar.gz", hash = "sha256:9f22ceb50eba4187f1032affbef520bb22dfd1d96666a412f531613ff42b277e"},
 ]
