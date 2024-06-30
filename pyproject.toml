@@ -9,6 +9,7 @@ packages = [{include = "castle_creations_py"}]
 [tool.poetry.dependencies]
 python = "^3.8"
 hid = "1.0.2"
+pyserial = "^3.5"
 
 [build-system]
 requires = ["poetry-core"]
