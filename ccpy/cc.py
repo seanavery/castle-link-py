@@ -2,7 +2,7 @@
 CC class used to read/write from tty interface
 """
 import serial
-
+from params import *
 def checksum(data):
     """
     The checksum is a modular sum. Correctly compute it as follows:
@@ -50,43 +50,24 @@ def castle_write(ser, reg, value):
     print(packet)
     ser.write(packet)
 
+class CastleSerialLink:
+    def __init__(self, port="/dev/ttyUSB0", baudrate=115200):
+        self.ser = serial.Serial(port, baudrate, timeout=1)
+        if self.ser.isOpen():
+            print("Connected to: " + self.ser.portstr)
+        else:
+            print("Failed to connect to: " + self.ser.portstr)
+            exit(1)
+
+    def read(self, reg):
+        return castle_read(self.ser, reg)
+
+    def write(self, reg, value):
+        return castle_write(self.ser, reg, value)
+
 if __name__ == "__main__":
-    # connect to /dev/ttyUSB0
-    ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=1)
+    csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
     
-    # check if the connection is open
-    if ser.isOpen():
-        print("Connected to: " + ser.portstr)
-    else:
-        print("Failed to connect to: " + ser.portstr)
-        exit(1)
-        
-    # write to tty
-    # 0 Voltage The controller’s input voltage
-    """
-    The three digital forms of communication (TTL Serial, SPI, and I2C) are implemented by reading / writing 
-    to a set of 16-bit registers. The available registers are described in the tables below. 
-    Note: that the registers are divided into Read and Write registers.
-    """
-    command_start = 1  # Command start is always 1
-    device_id = 0x00
-    first_byte = (command_start << 7) | (device_id & 0x3F) 
-    # print bits of first_byte
-    print(bin(first_byte)[2:].zfill(8))
-    
-    device_id = 0x00
-    voltage_register = 0x00
-    current_register = 0x03 # 3
-    
-    castle_read(ser, current_register)
-    
-    # test writing throttle
-    """
-    Register Name Description Write
-    128 Throttle The controller’s commanded throttle value 0 to 65535
-    """
-    
-    throttle_register = 128
-    throttle_value = 21845 # 0x8000
-    castle_write(ser, throttle_register, throttle_value)
+    print(csl.read(VOLTAGE_READ))
+    csl.write(THROTTLE_WRITE, 4000)
     
