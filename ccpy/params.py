@@ -1,23 +1,24 @@
 # Read Registers
-VOLTAGE_READ = 0x00
-RIPPLE_READ = 0x01
-CURRENT_READ = 0x02
-THROTTLE_READ = 0x03
-POWER_READ = 0x04
-SPEED_READ = 0x05
-TEMPERATURE_READ = 0x06
-BEC_VOLTAGE_READ = 0x07
-BEC_CURRENT_READ = 0x08
-RAW_NTC_READ = 0x09
-RAW_LINEAR_READ = 0x0A
-LINK_LIVE_READ = 0x19
-FAILSAFE_READ = 0x1A
-E_STOP_READ = 0x1B
-PACKET_IN_READ = 0x1C
-PACKET_OUT_READ = 0x1D
-CHECK_BAUD_READ = 0x1E
-PACKET_BAD_READ = 0x1F
-
+read_reg_to_name = {
+    0x00: "voltage",
+    0x01: "ripple",
+    0x02: "current",
+    0x03: "throttle",
+    0x04: "power",
+    0x05: "speed",
+    0x06: "temperature",
+    0x07: "bec_voltage",
+    0x08: "bec_current",
+    0x09: "raw_ntc",
+    0x0A: "raw_linear",
+    0x19: "link_live",
+    0x1A: "failsafe",
+    0x1B: "e_stop",
+    0x1C: "packet_in",
+    0x1D: "packet_out",
+    0x1E: "check_baud",
+    0x1F: "packet_bad",
+}
 # Write Registers
 THROTTLE_WRITE = 0x80
 FAIL_SAFE_WRITE = 0x81
@@ -39,3 +40,24 @@ BEC_CURRENT_PARSE = (4.0, 20, "Amps")
 TEMPERATURE_PARSE = (30.0, 150, "Degrees C")
 RAW_NTC_PARSE = (63.8125, 255, "Units")
 RAW_LINEAR_PARSE = (30.0, 150, "Degrees C")
+
+convert_name_to_parse = {
+    "voltage": (20.0, 100, "Volts"),
+    "ripple": (4.0, 20, "Volts"),
+    "current": (50.0, 250, "Amps"),
+    "throttle": (0.2502, 1, "Percent"),
+    "power": (0.2502, 1, "Percent"),
+    "speed": (20416.66, 100000, "Electrical RPM"),
+    "temperature": (30.0, 150, "Degrees C"),
+    "bec_voltage": (4.0, 20, "Volts"),
+    "bec_current": (4.0, 20, "Amps"),
+    "raw_ntc": (63.8125, 255, "Units"),
+    "raw_linear": (30.0, 150, "Degrees C"),
+    "link_live": (1.0, 1, "Boolean"),
+    "failsafe": (1.0, 1, "Boolean"),
+    "e_stop": (1.0, 1, "Boolean"),
+    "packet_in": (1.0, 1, "Boolean"),
+    "packet_out": (1.0, 1, "Boolean"),
+    "check_baud": (1.0, 1, "Bits per second"),
+    "packet_bad": (1.0, 1, "Boolean"),
+}
