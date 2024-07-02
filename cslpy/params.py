@@ -19,36 +19,28 @@ read_reg_to_name = {
     0x1E: "check_baud",
     0x1F: "packet_bad",
 }
+
 # Write Registers
-THROTTLE_WRITE = 0x80
-FAIL_SAFE_WRITE = 0x81
-E_STOP_WRITE = 0x82
-PACKET_IN_WRITE = 0x83
-PACKET_OUT_WRITE = 0x84
-CHECK_BAUD_WRITE = 0x85
-PACKET_BAD_WRITE = 0x86
+write_name_to_reg = {
+    "throttle": 0x80,
+    "fail_safe": 0x81,
+    "e_stop": 0x82,
+    "packet_in": 0x83,
+    "packet_out": 0x84,
+    "check_baud": 0x85,
+    "packet_bad": 0x86,
+}
 
 # Parse
 # Scale, Max, Units
-VOLTAGE_PARSE = (20.0, 100, "Volts")
-RIIPLE_PARSE = (4.0, 20, "Volts")
-CURRENT_PARSE = (50.0, 250, "Amps")
-POWER_PARSE = (0.2502, 1, "Percent")
-RPM_PARSE = (20416.66, 100000, "Electrical RPM")
-BEC_VOLTAGE_PARSE = (4.0, 20, "Volts")
-BEC_CURRENT_PARSE = (4.0, 20, "Amps")
-TEMPERATURE_PARSE = (30.0, 150, "Degrees C")
-RAW_NTC_PARSE = (63.8125, 255, "Units")
-RAW_LINEAR_PARSE = (30.0, 150, "Degrees C")
-
 convert_name_to_parse = {
     "voltage": (20.0, 100, "Volts"),
     "ripple": (4.0, 20, "Volts"),
     "current": (50.0, 250, "Amps"),
     "throttle": (0.2502, 1, "Percent"),
     "power": (0.2502, 1, "Percent"),
-    "speed": (20416.66, 100000, "Electrical RPM"),
-    "temperature": (30.0, 150, "Degrees C"),
+    "speed": (20416.66, 100000, "Electricl RPM"),
+    "temperature": (30.0, 150, "Degraees C"),
     "bec_voltage": (4.0, 20, "Volts"),
     "bec_current": (4.0, 20, "Amps"),
     "raw_ntc": (63.8125, 255, "Units"),

@@ -86,8 +86,13 @@ class CastleSerialLink:
     def read(self, reg):
         return castle_read(self.ser, reg)
 
-    def write(self, reg, value):
-        return castle_write(self.ser, reg, value)
+    def write(self, name="throttle", value=65535//2):
+        if name in write_name_to_reg:
+            reg = write_name_to_reg[name]
+            return castle_write(self.ser, reg, value)
+        else:
+            print("Invalid name", name)
+            return
     
     # listen background thread that reads all values for a given Hz
     def listen(self, hz):
@@ -112,8 +117,8 @@ if __name__ == "__main__":
     csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
     
     csl.listen(1)
-    for i in range(10):
-        csl.write(THROTTLE_WRITE, 4000)
+    for i in range(100):
+        csl.write("throttle", (65535//2)+4500)
         print(csl.cc_state)
         time.sleep(0.5)
     
