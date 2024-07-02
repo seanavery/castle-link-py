@@ -24,12 +24,20 @@ def castle_read(ser, reg):
 
     # Create the command packet
     command_start = 0b10000000  # Start bit with Device ID of 0
-    crc = -(command_start + reg) & 0xFF  # Checksum
-    buf = bytearray([command_start, reg, 0, 0, crc])
+    packet = [command_start, reg, 0, 0]
+    crc = checksum(packet)
+    packet += [crc]
+    print(packet)
+    buf = bytearray(packet)
     ser.write(buf)
+    # command_start = 0b10000000  # Start bit with Device ID of 0
+    # crc = -(command_start + reg) & 0xFF  # Checksum
+    # buf = bytearray([command_start, reg, 0, 0, crc])
+    # ser.write(buf)
 
     # Read the response
     response = ser.read(3)
+    # print("response:", response)
     if len(response) == 3:
         # Calculate and check the CRC
         if sum(response) & 0xFF == 0:
@@ -51,11 +59,14 @@ def castle_write(ser, reg, value):
     packet+= [crc]
     ser.write(packet)
     
+    while ser.in_waiting > 0:
+        ser.read()
+    
 def castle_parse(value_reg, scale):
     return (value_reg / 2042) * scale
 
 class CastleSerialLink:
-    cc_state = {
+    state = {
         "voltage": 0.0,
         "ripple": 0.0,
         "current": 0.0,
@@ -103,10 +114,32 @@ class CastleSerialLink:
         
     def listen_thread(self, hz):
         while self.listening:
-            for reg, name in read_reg_to_name.items():
-                value = castle_read(self.ser, reg)
-                if value:
-                    self.cc_state[name] = castle_parse(value, convert_name_to_parse[name][0])
+            # for reg, name in read_reg_to_name.items():
+           
+            value0 = castle_read(self.ser, 0x00)
+            value1 = castle_read(self.ser, 0x01)
+            value2 = castle_read(self.ser, 0x02)
+            value3 = castle_read(self.ser, 0x03)
+            value4 = castle_read(self.ser, 0x04)
+            value5 = castle_read(self.ser, 0x05)
+            if value0:
+                # print("voltage:", value0)
+                # print("ripple", value1)
+                # print("current:", value2)
+                # print("ripple:", value)
+                
+                # if name == "speed":
+                #     print("updating speed:", value)
+                # self.state[name] = castle_parse(value, convert_name_to_parse[name][0])
+                # self.state["speed"] = castle_parse(value, convert_name_to_parse["speed"][0])
+                self.state["voltage"] = castle_parse(value0, convert_name_to_parse["voltage"][0])
+                # self.state["voltage"] = castle_parse(value0, convert_name_to_parse["voltage"][0])
+                self.state["ripple"] = castle_parse(value1, convert_name_to_parse["ripple"][0])
+                self.state["current"] = castle_parse(value2, convert_name_to_parse["current"][0])
+                self.state["throttle"] = castle_parse(value3, convert_name_to_parse["throttle"][0])
+                self.state["power"] = castle_parse(value4, convert_name_to_parse["power"][0])
+                self.state["speed"] = castle_parse(value5, convert_name_to_parse["speed"][0])
+
             time.sleep(1/hz)
     
     def stop(self):
@@ -116,10 +149,12 @@ class CastleSerialLink:
 if __name__ == "__main__":
     csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
     
-    csl.listen(1)
+    csl.listen(30)
     for i in range(100):
-        csl.write("throttle", (65535//2)+4500)
-        print(csl.cc_state)
+        csl.write("throttle", (65535//2)+3000+(i*100))
+        # print(csl.state["speed"])
+        print(csl.state)
         time.sleep(0.5)
+    csl.stop()
     
     
