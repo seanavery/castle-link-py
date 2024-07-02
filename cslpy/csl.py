@@ -15,7 +15,7 @@ If the checksum is correct, the result of adding the bytes in the command or res
 will be 0x00 (ignoring overflows). The response checksum can be verified by adding the Response Data
 bytes and the response checksum, if valid they will total to 0x00 (ignoring overflows).
     """
-    return sum(data) & 0xFF
+    return -sum(data) & 0xFF
 
 def castle_read(ser, reg):
     # Clear the input buffer
@@ -26,18 +26,11 @@ def castle_read(ser, reg):
     command_start = 0b10000000  # Start bit with Device ID of 0
     packet = [command_start, reg, 0, 0]
     crc = checksum(packet)
-    packet += [crc]
-    print(packet)
-    buf = bytearray(packet)
+    buf = bytearray(packet + [crc])
     ser.write(buf)
-    # command_start = 0b10000000  # Start bit with Device ID of 0
-    # crc = -(command_start + reg) & 0xFF  # Checksum
-    # buf = bytearray([command_start, reg, 0, 0, crc])
-    # ser.write(buf)
-
+    
     # Read the response
     response = ser.read(3)
-    # print("response:", response)
     if len(response) == 3:
         # Calculate and check the CRC
         if sum(response) & 0xFF == 0:
@@ -55,9 +48,11 @@ def castle_write(ser, reg, value):
     high_byte = (value >> 8) & 0xFF
     low_byte = value & 0xFF
     packet = [command_start, reg, high_byte, low_byte]
-    crc = -sum(packet) & 0xFF
-    packet+= [crc]
-    ser.write(packet)
+    # crc = -sum(packet) & 0xFF
+    crc = checksum(packet)
+    # packet+= [crc]
+    buf = bytearray(packet + [crc])
+    ser.write(buf)
     
     while ser.in_waiting > 0:
         ser.read()
@@ -114,33 +109,10 @@ class CastleSerialLink:
         
     def listen_thread(self, hz):
         while self.listening:
-            # for reg, name in read_reg_to_name.items():
-           
-            value0 = castle_read(self.ser, 0x00)
-            value1 = castle_read(self.ser, 0x01)
-            value2 = castle_read(self.ser, 0x02)
-            value3 = castle_read(self.ser, 0x03)
-            value4 = castle_read(self.ser, 0x04)
-            value5 = castle_read(self.ser, 0x05)
-            if value0:
-                # print("voltage:", value0)
-                # print("ripple", value1)
-                # print("current:", value2)
-                # print("ripple:", value)
-                
-                # if name == "speed":
-                #     print("updating speed:", value)
-                # self.state[name] = castle_parse(value, convert_name_to_parse[name][0])
-                # self.state["speed"] = castle_parse(value, convert_name_to_parse["speed"][0])
-                self.state["voltage"] = castle_parse(value0, convert_name_to_parse["voltage"][0])
-                # self.state["voltage"] = castle_parse(value0, convert_name_to_parse["voltage"][0])
-                self.state["ripple"] = castle_parse(value1, convert_name_to_parse["ripple"][0])
-                self.state["current"] = castle_parse(value2, convert_name_to_parse["current"][0])
-                self.state["throttle"] = castle_parse(value3, convert_name_to_parse["throttle"][0])
-                self.state["power"] = castle_parse(value4, convert_name_to_parse["power"][0])
-                self.state["speed"] = castle_parse(value5, convert_name_to_parse["speed"][0])
-
-            time.sleep(1/hz)
+            for reg, name in read_reg_to_name.items():
+                value = castle_read(self.ser, reg)
+                if value:
+                    self.state[name] = castle_parse(value, convert_name_to_parse[name][0])
     
     def stop(self):
         self.listening = False
@@ -152,7 +124,6 @@ if __name__ == "__main__":
     csl.listen(30)
     for i in range(100):
         csl.write("throttle", (65535//2)+3000+(i*100))
-        # print(csl.state["speed"])
         print(csl.state)
         time.sleep(0.5)
     csl.stop()
