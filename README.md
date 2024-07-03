@@ -1,5 +1,5 @@
 # castle-link-py
-> read/write to castle creations esc with python
+> Read/Write to Castle Creations ESC with Python
 
 ![Castle Serial Link](./etc/castle_serial_link.png)
 
@@ -11,9 +11,9 @@ Want to get the vEgo (velocity) of your rc-car without installing wheel encoders
 
 ### Hardware
 You are going to need some Castle Creations hardware.
-- Castle Creations ESC
-- Castle Creations Serial Link
-- FTDI Serial TTY Adapter
+- [Castle Creations ESC + Sensored Motor](https://www.castlecreations.com/products-search?qs=Sensored+motor)
+- [Castle Serial Link](https://www.castlecreations.com/en/serial-link-010-0121-00)
+- [FTDI USB to TTY Adapter](http://www.hiletgo.com/ProductDetail/2152064.html)
 
 ### Software
 
@@ -37,4 +37,5 @@ sudo usermod -a -G dialout
 ```
 
 ## Refs
-- [old castle link docs](https://www.astramodel.cz/manualy/castle_creations/castle_serial_link_v1_5.pdf)
+- [Castle Serial Link Docs](https://www.astramodel.cz/manualy/castle_creations/castle_serial_link_v1_5.pdf)
+- [Castle Link Live Communication Protocol](https://www.castlecreations.com/castle-link-live)
