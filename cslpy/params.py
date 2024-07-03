@@ -16,7 +16,7 @@ read_reg_to_name = {
     0x1B: "e_stop",
     0x1C: "packet_in",
     0x1D: "packet_out",
-    0x1E: "check_baud",
+    0x1E: "baudrate",
     0x1F: "packet_bad",
 }
 
@@ -27,13 +27,13 @@ write_name_to_reg = {
     "e_stop": 0x82,
     "packet_in": 0x83,
     "packet_out": 0x84,
-    "check_baud": 0x85,
+    "baudrate": 0x85,
     "packet_bad": 0x86,
 }
 
 # Parse
 # Scale, Max, Units
-convert_name_to_parse = {
+scale_name_to_parse = {
     "voltage": (20.0, 100, "Volts"),
     "ripple": (4.0, 20, "Volts"),
     "current": (50.0, 250, "Amps"),
@@ -45,11 +45,14 @@ convert_name_to_parse = {
     "bec_current": (4.0, 20, "Amps"),
     "raw_ntc": (63.8125, 255, "Units"),
     "raw_linear": (30.0, 150, "Degrees C"),
+}
+
+num_name_to_parse = {
     "link_live": (1.0, 1, "Boolean"),
     "failsafe": (1.0, 1, "Boolean"),
     "e_stop": (1.0, 1, "Boolean"),
-    "packet_in": (1.0, 1, "Boolean"),
-    "packet_out": (1.0, 1, "Boolean"),
-    "check_baud": (1.0, 1, "Bits per second"),
-    "packet_bad": (1.0, 1, "Boolean"),
+    "packet_in": (1.0, 1, "Packets"),
+    "packet_out": (1.0, 1, "Packets"),
+    "baudrate": (1.0, 1, "Bits per second"),
+    "packet_bad": (1.0, 1, "Packets"),
 }

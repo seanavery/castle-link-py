@@ -11,9 +11,6 @@ def checksum(data):
     """
 The checksum is a modular sum. Correctly compute it as follows:
 Checksum = 0 - (Byte 0 + Byte 1 + Byte 2 + Byte 3)
-If the checksum is correct, the result of adding the bytes in the command or response packet together
-will be 0x00 (ignoring overflows). The response checksum can be verified by adding the Response Data
-bytes and the response checksum, if valid they will total to 0x00 (ignoring overflows).
     """
     return -sum(data) & 0xFF
 
@@ -48,9 +45,7 @@ def castle_write(ser, reg, value):
     high_byte = (value >> 8) & 0xFF
     low_byte = value & 0xFF
     packet = [command_start, reg, high_byte, low_byte]
-    # crc = -sum(packet) & 0xFF
     crc = checksum(packet)
-    # packet+= [crc]
     buf = bytearray(packet + [crc])
     ser.write(buf)
     
@@ -110,10 +105,16 @@ class CastleSerialLink:
     def listen_thread(self, hz):
         while self.listening:
             for reg, name in read_reg_to_name.items():
+                time.sleep(0.01)
                 value = castle_read(self.ser, reg)
-                if value:
-                    self.state[name] = castle_parse(value, convert_name_to_parse[name][0])
-    
+                if not value:
+                    continue
+                if value and name in scale_name_to_parse:
+                    self.state[name] = castle_parse(value, scale_name_to_parse[name][0])
+                elif value and name in num_name_to_parse:
+                    self.state[name] = value
+            time.sleep(1/hz)
+
     def stop(self):
         self.listening = False
 
@@ -121,7 +122,7 @@ class CastleSerialLink:
 if __name__ == "__main__":
     csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
     
-    csl.listen(30)
+    csl.listen(40)
     for i in range(100):
         csl.write("throttle", (65535//2)+3000+(i*100))
         print(csl.state)
