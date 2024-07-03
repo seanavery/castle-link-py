@@ -1,6 +1,3 @@
-"""
-CC class used to read/write from tty interface
-"""
 import serial
 import threading
 import time
@@ -105,7 +102,6 @@ class CastleSerialLink:
     def listen_thread(self, hz):
         while self.listening:
             for reg, name in read_reg_to_name.items():
-                time.sleep(0.01)
                 value = castle_read(self.ser, reg)
                 if not value:
                     continue
@@ -124,9 +120,7 @@ if __name__ == "__main__":
     
     csl.listen(40)
     for i in range(100):
-        csl.write("throttle", (65535//2)+3000+(i*100))
-        print(csl.state)
         time.sleep(0.5)
+        print(csl.state)
     csl.stop()
-    
     
