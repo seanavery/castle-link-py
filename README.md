@@ -1,19 +1,35 @@
-# castle-creations-py
-> read/write to castle-creations esc with python
+# castle-link-py
+> read/write to castle creations esc with python
 
-## why?
+![Castle Serial Link](./etc/castle_serial_link.png)
 
-Want to get the vEgo (velocity) of your rc-car without installing wheel encoders? How about realtime battery metrics? You can evern control the throttle without a pwm driver from any linux machine with a usb port!
+## Why?
 
-## how?
+Want to get the vEgo (velocity) of your rc-car without installing wheel encoders? How about realtime battery metrics? You can even control the throttle without a pwm driver! 
 
-### hardware
+## How?
+
+### Hardware
+You are going to need some Castle Creations hardware.
 - Castle Creations ESC
 - Castle Creations Serial Link
 - FTDI Serial TTY Adapter
 
-### software
-- TODO
+### Software
+
+```
+csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
+```
+
+### Read
+
+```
+csl.listen(40)
+for i in range(100):
+    time.sleep(0.5)
+    print(csl.state)
+csl.stop()
+```
 
 ## Remove sudo requirement
 ```
