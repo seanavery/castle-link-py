@@ -23,16 +23,22 @@ csl = CastleSerialLink(port="/dev/ttyUSB0", baudrate=115200)
 
 ### Read
 
-```
-csl.listen(40)
+```python
+csl.listen(40) # background thread 40 Hz
 for i in range(100):
     time.sleep(0.5)
     print(csl.state)
 csl.stop()
 ```
 
-## Remove sudo requirement
+### Write
+
+```python
+csl.write("throttle", 65535//2+3000)  # move forward
 ```
+
+## Remove sudo requirement
+```bash
 sudo usermod -a -G dialout
 ```
 
